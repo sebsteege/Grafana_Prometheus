@@ -1,18 +1,95 @@
-# Install snap pacakage manager
-sudo apt install snap
+# First install docker and its required dependencies
 
-# Install kubctl and kubeadm
-sudo snap install kubectl --classic
-sudo snap install kubeadm --classic
-sudo snap install kubelet --classic
+sudo apt update
 
-# Install microk8s aand verify services
-sudo snap install microk8s --classic
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
 
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
-microk8s status --wait-ready
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
+sudo apt update
 
-ATTEMPT 2
----
+apt-cache policy docker-ce
+
+sudo apt install docker-ce
+
+sudo systemctl status docker
+
+# Sudo systemctl status docker should display the following:
+
+admin@example:~$ sudo systemctl status docker
+● docker.service - Docker Application Container Engine
+     Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+     Active: active (running) since Sun 2022-12-04 17:56:13 UTC; 4s ago
+TriggeredBy: ● docker.socket
+       Docs: https://docs.docker.com
+   Main PID: 2714 (dockerd)
+      Tasks: 8
+     Memory: 23.8M
+        CPU: 191ms
+     CGroup: /system.slice/docker.service
+             └─2714 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+# Minikube requires that the docker driver is not ran as a root user. You will need to modify docker so that it can be ran as the local user which is signed in:
+
+sudo usermod -aG docker ${USER} && newgrp docker
+
+# To add additional users to the docker group:
+
+sudo usermod -aG docker username
+
+# Now we can proceed to install minikube and start the service:
+
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+
+admin@example:~$ minikube start
+😄  minikube v1.28.0 on Ubuntu 22.04
+✨  Automatically selected the docker driver. Other choices: none, ssh
+📌  Using Docker driver with root privileges
+👍  Starting control plane node minikube in cluster minikube
+🚜  Pulling base image ...
+💾  Downloading Kubernetes v1.25.3 preload ...
+    > preloaded-images-k8s-v18-v1...:  385.44 MiB / 385.44 MiB  100.00% 34.32 M
+    > gcr.io/k8s-minikube/kicbase:  386.27 MiB / 386.27 MiB  100.00% 26.98 MiB
+    > gcr.io/k8s-minikube/kicbase:  0 B [________________________] ?% ? p/s 11s
+🔥  Creating docker container (CPUs=2, Memory=2200MB) ...
+🐳  Preparing Kubernetes v1.25.3 on Docker 20.10.20 ...
+    ▪ Generating certificates and keys ...
+    ▪ Booting up control plane ...
+    ▪ Configuring RBAC rules ...
+🔎  Verifying Kubernetes components...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  Enabled addons: storage-provisioner, default-storageclass
+💡  kubectl not found. If you need it, try: 'minikube kubectl -- get pods -A'
+🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+
+# Allow minikube to install the appropriate version of kubectl:
+
+admin@example:~$ minikube kubectl -- get po -A
+    > kubectl.sha256:  64 B / 64 B [-------------------------] 100.00% ? p/s 0s
+    > kubectl:  42.93 MiB / 42.93 MiB [-----------] 100.00% 78.16 MiB p/s 800ms
+NAMESPACE     NAME                               READY   STATUS    RESTARTS        AGE
+kube-system   coredns-565d847f94-hlc7x           1/1     Running   0               4m30s
+kube-system   etcd-minikube                      1/1     Running   0               4m42s
+kube-system   kube-apiserver-minikube            1/1     Running   0               4m42s
+kube-system   kube-controller-manager-minikube   1/1     Running   0               4m42s
+kube-system   kube-proxy-db8wd                   1/1     Running   0               4m30s
+kube-system   kube-scheduler-minikube            1/1     Running   0               4m42s
+kube-system   storage-provisioner                1/1     Running   1 (4m28s ago)   4m40s
+
+# Optionally you can create an alias:
+admin@example:~$ alias kubectl="minikube kubectl --"
+admin@example:~$
+admin@example:~$
+admin@example:~$ kubectl get po -A
+NAMESPACE     NAME                               READY   STATUS    RESTARTS        AGE
+kube-system   coredns-565d847f94-hlc7x           1/1     Running   0               7m23s
+kube-system   etcd-minikube                      1/1     Running   0               7m35s
+kube-system   kube-apiserver-minikube            1/1     Running   0               7m35s
+kube-system   kube-controller-manager-minikube   1/1     Running   0               7m35s
+kube-system   kube-proxy-db8wd                   1/1     Running   0               7m23s
+kube-system   kube-scheduler-minikube            1/1     Running   0               7m35s
+kube-system   storage-provisioner                1/1     Running   1 (7m21s ago)   7m33s
 
