@@ -1,1 +1,18 @@
+# Install snap pacakage manager
+sudo apt install snap
+
+# Install kubctl and kubeadm
+sudo snap install kubectl --classic
+sudo snap install kubeadm --classic
+sudo snap install kubelet --classic
+
+# Install microk8s aand verify services
+sudo snap install microk8s --classic
+
+
+microk8s status --wait-ready
+
+
+ATTEMPT 2
+---
 
