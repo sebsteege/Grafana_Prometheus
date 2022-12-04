@@ -166,13 +166,19 @@ $ helm install prometheus prometheus-community/prometheus
 
 $ kubectl get all
 
-!!!!!ERROR HERE!!!!!
-###################
 # to expose prometheus for access outside of the cluster run the following:
 
-$ kubectl expose service prometheus-server — type=NodePort — target-port=9090 — name=prometheus-server-ext
-$ minikube service prometheus-server-ext
-######################
+$ kubectl expose service prometheus-server --type=NodePort --target-port=9090 --name=prometheus-server-ext
+     service/prometheus-server-ext exposed
+$ minikube service prometheus-service-ext
+|-----------|-----------------------|-------------|---------------------------|
+| NAMESPACE |         NAME          | TARGET PORT |            URL            |
+|-----------|-----------------------|-------------|---------------------------|
+| default   | prometheus-server-ext |          80 | http://192.168.49.2:30267 |
+|-----------|-----------------------|-------------|---------------------------|
+🎉  Opening service default/prometheus-server-ext in default browser...
+👉  http://192.168.49.2:30267
+
 
 # Install grafana using:
 
@@ -200,4 +206,18 @@ $ helm install grafana grafana/grafana
      ######   WARNING: Persistence is disabled!!! You will lose your data when   #####
      ######            the Grafana pod is terminated.                            #####
      #################################################################################
+
+# to expose prometheus for access outside of the cluster run the following:
+
+$ kubectl expose service grafana --type=NodePort --target-port=3000 --name=grafana-ext
+     service/grafana-ext exposed
+$ minikube service grafana-ext
+|-----------|-------------|-------------|---------------------------|
+| NAMESPACE |    NAME     | TARGET PORT |            URL            |
+|-----------|-------------|-------------|---------------------------|
+| default   | grafana-ext |          80 | http://192.168.49.2:32492 |
+|-----------|-------------|-------------|---------------------------|
+🎉  Opening service default/grafana-ext in default browser...
+👉  http://192.168.49.2:32492
+
 
