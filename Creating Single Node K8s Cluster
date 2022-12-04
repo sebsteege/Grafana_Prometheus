@@ -1,24 +1,24 @@
 # First install docker and its required dependencies
 
-sudo apt update
+$ sudo apt update
 
-sudo apt install apt-transport-https ca-certificates curl software-properties-common
+$ sudo apt install apt-transport-https ca-certificates curl software-properties-common
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+$ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-sudo apt update
+$ sudo apt update
 
-apt-cache policy docker-ce
+$ apt-cache policy docker-ce
 
-sudo apt install docker-ce
+$ sudo apt install docker-ce
 
-sudo systemctl status docker
+$ sudo systemctl status docker
 
 # Sudo systemctl status docker should display the following:
 
-admin@example:~$ sudo systemctl status docker
+$ sudo systemctl status docker
 ● docker.service - Docker Application Container Engine
      Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
      Active: active (running) since Sun 2022-12-04 17:56:13 UTC; 4s ago
@@ -33,63 +33,141 @@ TriggeredBy: ● docker.socket
 
 # Minikube requires that the docker driver is not ran as a root user. You will need to modify docker so that it can be ran as the local user which is signed in:
 
-sudo usermod -aG docker ${USER} && newgrp docker
+$ sudo usermod -aG docker ${USER} && newgrp docker
 
 # To add additional users to the docker group:
 
-sudo usermod -aG docker username
+$ sudo usermod -aG docker username
 
 # Now we can proceed to install minikube and start the service:
 
-curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-sudo install minikube-linux-amd64 /usr/local/bin/minikube
+$ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+$ sudo install minikube-linux-amd64 /usr/local/bin/minikube
 
-admin@example:~$ minikube start
-😄  minikube v1.28.0 on Ubuntu 22.04
-✨  Automatically selected the docker driver. Other choices: none, ssh
-📌  Using Docker driver with root privileges
-👍  Starting control plane node minikube in cluster minikube
-🚜  Pulling base image ...
-💾  Downloading Kubernetes v1.25.3 preload ...
+$ minikube start
+     😄  minikube v1.28.0 on Ubuntu 22.04
+     ✨  Automatically selected the docker driver. Other choices: none, ssh
+     📌  Using Docker driver with root privileges
+     👍  Starting control plane node minikube in cluster minikube
+     🚜  Pulling base image ...
+     💾  Downloading Kubernetes v1.25.3 preload ...
     > preloaded-images-k8s-v18-v1...:  385.44 MiB / 385.44 MiB  100.00% 34.32 M
     > gcr.io/k8s-minikube/kicbase:  386.27 MiB / 386.27 MiB  100.00% 26.98 MiB
     > gcr.io/k8s-minikube/kicbase:  0 B [________________________] ?% ? p/s 11s
-🔥  Creating docker container (CPUs=2, Memory=2200MB) ...
-🐳  Preparing Kubernetes v1.25.3 on Docker 20.10.20 ...
+     🔥  Creating docker container (CPUs=2, Memory=2200MB) ...
+     🐳  Preparing Kubernetes v1.25.3 on Docker 20.10.20 ...
     ▪ Generating certificates and keys ...
     ▪ Booting up control plane ...
     ▪ Configuring RBAC rules ...
-🔎  Verifying Kubernetes components...
+     🔎  Verifying Kubernetes components...
     ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
-🌟  Enabled addons: storage-provisioner, default-storageclass
-💡  kubectl not found. If you need it, try: 'minikube kubectl -- get pods -A'
-🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+     🌟  Enabled addons: storage-provisioner, default-storageclass
+     💡  kubectl not found. If you need it, try: 'minikube kubectl -- get pods -A'
+     🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
 
 # Allow minikube to install the appropriate version of kubectl:
 
-admin@example:~$ minikube kubectl -- get po -A
+$ minikube kubectl -- get po -A
     > kubectl.sha256:  64 B / 64 B [-------------------------] 100.00% ? p/s 0s
     > kubectl:  42.93 MiB / 42.93 MiB [-----------] 100.00% 78.16 MiB p/s 800ms
-NAMESPACE     NAME                               READY   STATUS    RESTARTS        AGE
-kube-system   coredns-565d847f94-hlc7x           1/1     Running   0               4m30s
-kube-system   etcd-minikube                      1/1     Running   0               4m42s
-kube-system   kube-apiserver-minikube            1/1     Running   0               4m42s
-kube-system   kube-controller-manager-minikube   1/1     Running   0               4m42s
-kube-system   kube-proxy-db8wd                   1/1     Running   0               4m30s
-kube-system   kube-scheduler-minikube            1/1     Running   0               4m42s
-kube-system   storage-provisioner                1/1     Running   1 (4m28s ago)   4m40s
+     NAMESPACE     NAME                               READY   STATUS    RESTARTS        AGE
+     kube-system   coredns-565d847f94-hlc7x           1/1     Running   0               4m30s
+     kube-system   etcd-minikube                      1/1     Running   0               4m42s
+     kube-system   kube-apiserver-minikube            1/1     Running   0               4m42s
+     kube-system   kube-controller-manager-minikube   1/1     Running   0               4m42s
+     kube-system   kube-proxy-db8wd                   1/1     Running   0               4m30s
+     kube-system   kube-scheduler-minikube            1/1     Running   0               4m42s
+     kube-system   storage-provisioner                1/1     Running   1 (4m28s ago)   4m40s
 
 # Optionally you can create an alias:
-admin@example:~$ alias kubectl="minikube kubectl --"
-admin@example:~$
-admin@example:~$
-admin@example:~$ kubectl get po -A
-NAMESPACE     NAME                               READY   STATUS    RESTARTS        AGE
-kube-system   coredns-565d847f94-hlc7x           1/1     Running   0               7m23s
-kube-system   etcd-minikube                      1/1     Running   0               7m35s
-kube-system   kube-apiserver-minikube            1/1     Running   0               7m35s
-kube-system   kube-controller-manager-minikube   1/1     Running   0               7m35s
-kube-system   kube-proxy-db8wd                   1/1     Running   0               7m23s
-kube-system   kube-scheduler-minikube            1/1     Running   0               7m35s
-kube-system   storage-provisioner                1/1     Running   1 (7m21s ago)   7m33s
+
+$ alias kubectl="minikube kubectl --"
+$ kubectl get po -A
+     NAMESPACE     NAME                               READY   STATUS    RESTARTS        AGE
+     kube-system   coredns-565d847f94-hlc7x           1/1     Running   0               7m23s
+     kube-system   etcd-minikube                      1/1     Running   0               7m35s
+     kube-system   kube-apiserver-minikube            1/1     Running   0               7m35s
+     kube-system   kube-controller-manager-minikube   1/1     Running   0               7m35s
+     kube-system   kube-proxy-db8wd                   1/1     Running   0               7m23s
+     kube-system   kube-scheduler-minikube            1/1     Running   0               7m35s
+     kube-system   storage-provisioner                1/1     Running   1 (7m21s ago)   7m33s
+
+# Next we will need to install helm:
+
+$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+$ chmod 700 get_helm.sh
+$ ./get_helm.sh
+     Downloading https://get.helm.sh/helm-v3.10.2-linux-amd64.tar.gz
+     Verifying checksum... Done.
+     Preparing to install helm into /usr/local/bin
+     [sudo] password for cvadmin:
+     helm installed into /usr/local/bin/helm
+
+#  Add the following Prometheus and Grafana repositories into the helo repo
+
+$ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+     "prometheus-community" has been added to your repositories
+$ helm repo add grafana https://grafana.github.io/helm-charts
+     "grafana" has been added to your repositories
+$ helm repo update
+     Hang tight while we grab the latest from your chart repositories...
+     ...Successfully got an update from the "grafana" chart repository
+     ...Successfully got an update from the "prometheus-community" chart repository
+     Update Complete. ⎈Happy Helming!⎈
+
+# Now we can install prometheus using helm:
+
+$ helm install prometheus prometheus-community/prometheus
+
+     NAME: prometheus
+     LAST DEPLOYED: Sun Dec  4 18:20:48 2022
+     NAMESPACE: default
+     STATUS: deployed
+     REVISION: 1
+     NOTES:
+     The Prometheus server can be accessed via port 80 on the following DNS name from within your cluster:
+     prometheus-server.default.svc.cluster.local
+
+
+     Get the Prometheus server URL by running these commands in the same shell:
+          export POD_NAME=$(kubectl get pods --namespace default -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
+          kubectl --namespace default port-forward $POD_NAME 9090
+
+
+     The Prometheus alertmanager can be accessed via port  on the following DNS name from within your cluster:
+     prometheus-%!s(<nil>).default.svc.cluster.local
+
+
+     Get the Alertmanager URL by running these commands in the same shell:
+          export POD_NAME=$(kubectl get pods --namespace default -l "app=prometheus,component=" -o jsonpath="{.items[0].metadata.name}")
+           kubectl --namespace default port-forward $POD_NAME 9093
+     #################################################################################
+     ######   WARNING: Pod Security Policy has been disabled by default since    #####
+     ######            it deprecated after k8s 1.25+. use                        #####
+     ######            (index .Values "prometheus-node-exporter" "rbac"          #####
+     ###### .          "pspEnabled") with (index .Values                         #####
+     ######            "prometheus-node-exporter" "rbac" "pspAnnotations")       #####
+     ######            in case you still need it.                                #####
+     #################################################################################
+
+
+     The Prometheus PushGateway can be accessed via port 9091 on the following DNS name from within your cluster:
+     prometheus-prometheus-pushgateway.default.svc.cluster.local
+
+
+     Get the PushGateway URL by running these commands in the same shell:
+          export POD_NAME=$(kubectl get pods --namespace default -l "app=prometheus-pushgateway,component=pushgateway" -o jsonpath="{.items[0].metadata.name}")
+          kubectl --namespace default port-forward $POD_NAME 9091
+
+     For more information on running Prometheus, visit:
+     https://prometheus.io/
+
+# kubectl get all will allow us to view all of the services running on the cluster
+
+$ kubectl get all
+
+# to expose prometheus for access outside of the cluster run the following:
+
+$ kubectl expose service prometheus-server — type=NodePort — target-port=9090 — name=prometheus-server-ext
+$ minikube service prometheus-server-ext
 
