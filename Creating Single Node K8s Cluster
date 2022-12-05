@@ -261,3 +261,7 @@ $ echo password-value | base64 --decode
 
 $ echo "username-value" | base64 --decode
 <decoded username here>
+
+# To allow for external access from the container if a rule does not exist in iptables:
+
+$ sudo iptables -t nat -A POSTROUTING -s 192.168.49.2/32 ! -o br0 -j MASQUERADE
