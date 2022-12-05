@@ -1,0 +1,5 @@
+# Update helm repository
+
+$ helm repo update
+$ helm install prometheus-snmp-exporter prometheus-community/prometheus-snmp-exporter
+
