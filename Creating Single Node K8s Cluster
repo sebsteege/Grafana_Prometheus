@@ -221,3 +221,11 @@ $ minikube service grafana-ext
 👉  http://192.168.49.2:32492
 
 
+# Next we need to create a NAT from the host interface to the bridged virtula interface for both grafana and prometheus
+# You can verify the destination port (default 30000 - 32000 for kubernetes) from the above output of 'minikube service example-ext'
+
+$ sudo iptables -t nat -A PREROUTING -d 10.20.20.52/32 -p tcp -m tcp --dport 9090 -j DNAT --to-destination 192.168.49.2:30267
+$ sudo iptables -A DOCKER -d 192.168.49.2/32 ! -i br-5504d87a0615 -o br-5504d87a0615 -p tcp -m tcp --dport 30267 -j ACCEPT
+
+$ sudo iptables -t nat -A PREROUTING -d 10.20.20.52/32 -p tcp -m tcp --dport 3000 -j DNAT --to-destination 192.168.49.2:32492
+$ sudo iptables -A DOCKER -d 192.168.49.2/32 ! -i br-5504d87a0615 -o br-5504d87a0615 -p tcp -m tcp --dport 32492 -j ACCEPT
