@@ -1,3 +1,6 @@
+# Remove any iptables rules added
+# Rules based on conflicting bridge interfaces could take precedence over new bridge interface
+
 $ minikube delete
 $ minikube delete --all
 $ minikube delete --purge
