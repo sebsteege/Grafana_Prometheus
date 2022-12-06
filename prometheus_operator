@@ -1,1 +1,5 @@
 # Assumes helm is installed and minikube are started
+
+$ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+$ helm install my-release prometheus-community/kube-prometheus-stack
+
